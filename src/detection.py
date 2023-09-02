@@ -1,6 +1,7 @@
 import cv2
 import time
 import numpy as np
+import json
 from collections import OrderedDict
 
 def detect_and_label(roi, net, output_layers, object_type):
@@ -46,6 +47,7 @@ while True:
 #CAR DETECTION
     for (x, y, w, h) in cars:
         roi = frame[y:y + h, x:x + w]
+        trackedCar[time.time()] = {x: x, y: y}
 
         detected, label = detect_and_label(roi, yolo_net, output_layers, "Car")
         if detected:
@@ -62,6 +64,7 @@ while True:
 #HUMAN DETECTION
     for (x, y, w, h) in humans:
         roi = frame[y:y + h, x:x + w]
+        trackedHuman[time.time()] = {x: x, y: y}
 
         detected, label = detect_and_label(roi, yolo_net, output_layers, "Car")
         if detected:
@@ -79,6 +82,11 @@ while True:
     cv2.imshow('Car and human detection with OpenCV and YOLO', frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
+        with open('car.json', 'w') as fp:
+            json.dump(trackedCar, fp)
+            
+        with open('human.json', 'f') as fp:
+            json.dump(trackedHuman, fp)
         break;
 
 cap.release()
