@@ -58,6 +58,10 @@ while True:
             over_limit_text = ""
             if current_time - trackedCar[key] > time_limit_car:
                 over_limit_text = "- OVER TIME LIMIT"
+                screenshot_roi = frame[y:y + h, x:x + w]
+                screenshot_name = str(time.time()) + ".png"
+                cv2.imwrite(screenshot_name, screenshot_roi)    
+
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(frame, label + over_limit_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
@@ -75,13 +79,18 @@ while True:
             over_limit_text = ""
             if current_time - trackedHuman[key] > time_limit_human:
                 over_limit_text = "- OVER TIME LIMIT"
+                screenshot_roi = frame[y:y + h, x:x + w]
+                screenshot_name = str(time.time()) + ".png"
+                cv2.imwrite(screenshot_name, screenshot_roi)    
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(frame, label + over_limit_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
     cv2.imshow('Car and human detection with OpenCV and YOLO', frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    keyPressed = cv2.waitKey(1)
+
+    if keyPressed & 0xFF == ord('q'):
         with open('car.json', 'w') as fp:
             json.dump(trackedCar, fp)
             
