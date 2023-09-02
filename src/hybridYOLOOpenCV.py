@@ -4,6 +4,12 @@ import numpy as np
 import json
 from collections import OrderedDict
 
+try:
+    with open('car.json', 'r') as fp:
+        trackedCar = json.load(fp)
+except FileNotFoundError:    
+    trackedCar = OrderedDict()
+
 def detect_and_label(roi, net, output_layers, object_type):
     height, width, channels = roi.shape
     blob = cv2.dnn.blobFromImage(roi, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
