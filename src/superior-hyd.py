@@ -3,7 +3,8 @@ import time
 import numpy as np
 import json
 from collections import OrderedDict
-from deep_sort_realtime.deepsort_tracker import DeepSort
+from deep_sort.deep_sort import tracker
+from deep_sort.deep_sort import track
 
 
 try:
@@ -38,11 +39,8 @@ human_cascade = cv2.CascadeClassifier('cascade_files/haarcascade_fullbody.xml')
 yolo_net = cv2.dnn.readNet("yolo_files/yolov3-tiny.weights", "yolo_files/yolov3-tiny.cfg")
 layers_names = yolo_net.getLayerNames()
 output_layers = [layers_names[i[0] - 1] for i in yolo_net.getUnconnectedOutLayers()]
-tracker = DeepSort(
-    model_path='public/ckpt.t7',
-    max_age=30,
-    nn_budget=100)
 
+deepTracker = tracker.Tracker(metric='cosine', max_iou_distance=0.6, max_age=50, n_init=5)
 
 trackedCar = OrderedDict()
 trackedHuman = OrderedDict()
@@ -65,10 +63,11 @@ while True:
             confidence = float(label.split(":")[1])
             detections_car.append([x, y, w, h, confidence])
 
-    tracks = tracker.update_tracks(np.asarray(detections_car), frame)
+    deepTracker.predict()
+    deepTracker.update(detections_car)
 
-    for track in tracks:
-        if not track.is_confirmed() or track.time_since_update > 1:
+    for track in deepTracker.tracks:
+        if not track.is_confirmed or track.time_since_update > 1:
             continue
         bbox = track.to_tlbr()
         track_id = track.track_id
@@ -93,7 +92,7 @@ while True:
                 cv2.imwrite(screenshot_name, screenshot_roi)    
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.putText(frame, label + over_limit_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+            cv2.putText(frame, f"{label} {over_limit_text}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
     cv2.imshow('Car and human detection with OpenCV and YOLO', frame)
 

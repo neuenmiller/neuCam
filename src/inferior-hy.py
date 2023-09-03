@@ -69,7 +69,7 @@ while True:
                 cv2.imwrite(screenshot_name, screenshot_roi)    
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.putText(frame, label + over_limit_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+            cv2.putText(frame, f"{label} {over_limit_text}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
 #HUMAN DETECTION
     for (x, y, w, h) in humans:
@@ -90,7 +90,7 @@ while True:
                 cv2.imwrite(screenshot_name, screenshot_roi)    
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.putText(frame, label + over_limit_text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+            cv2.putText(frame, f"{label} {over_limit_text}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
     cv2.imshow('Car and human detection with OpenCV and YOLO', frame)
 
