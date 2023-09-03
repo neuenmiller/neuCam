@@ -32,8 +32,8 @@ time_limit_human = 600  # 10 minutes
 
 cap = cv2.VideoCapture(0)
 
-car_cascade = cv2.CascadeClassifier('haarcascade_car.xml')
-human_cascade = cv2.CascadeClassifier('haarcascade_fullbody.xml')
+car_cascade = cv2.CascadeClassifier('cascade_files/haarcascade_car.xml')
+human_cascade = cv2.CascadeClassifier('cascade_files/haarcascade_fullbody.xml')
 
 yolo_net = cv2.dnn.readNet("yolo_files/yolov3-tiny.weights", "yolo_files/yolov3-tiny.cfg")
 layers_names = yolo_net.getLayerNames()
@@ -76,7 +76,7 @@ while True:
         roi = frame[y:y + h, x:x + w]
         trackedHuman[time.time()] = {x: x, y: y}
 
-        detected, label = detect_and_label(roi, yolo_net, output_layers, "Car")
+        detected, label = detect_and_label(roi, yolo_net, output_layers, "Human")
         if detected:
             key = (x, y, w, h)
             if key not in trackedHuman:
